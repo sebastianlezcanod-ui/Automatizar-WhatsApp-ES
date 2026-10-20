@@ -1041,5 +1041,75 @@
   color: #ffffff !important;
 }
 
+/* --- Country Code Prefix Card --- */
+.wads-cc-card {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  background: var(--wads-card-dark) !important;
+  border: 1.5px solid var(--wads-border-dark) !important;
+  border-radius: var(--wads-radius) !important;
+  padding: 9px 12px !important;
+  margin-top: 8px !important;
+  margin-bottom: 8px !important;
+  box-sizing: border-box !important;
+  cursor: pointer !important;
+  user-select: none !important;
+  transition: all 0.2s ease !important;
+}
 
+.wads-cc-card:hover {
+  border-color: rgba(0, 168, 132, 0.45) !important;
+}
 
+.wads-cc-card.active {
+  border-color: var(--wads-primary) !important;
+  background: rgba(0, 168, 132, 0.08) !important;
+}
+
+.wads-cc-info {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 2px !important;
+  pointer-events: none !important;
+}
+
+.wads-cc-title {
+  display: flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  font-size: 12.5px !important;
+  font-weight: 600 !important;
+  color: var(--wads-text-main) !important;
+}
+
+.wads-cc-sub {
+  font-size: 11px !important;
+  color: var(--wads-text-muted) !important;
+}
+
+.wads-cc-right {
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  pointer-events: auto !important;
+}
+
+.wads-cc-input {
+  width: 52px !important;
+  padding: 3px 6px !important;
+  font-size: 12px !important;
+  font-weight: 700 !important;
+  text-align: center !important;
+  height: 28px !important;
+  border-radius: 6px !important;
+  border: 1px solid var(--wads-border-dark) !important;
+  background: rgba(0, 0, 0, 0.3) !important;
+  color: #00e676 !important;
+  box-sizing: border-box !important;
+}
+
+.wads-cc-input:focus {
+  border-color: var(--wads-primary) !important;
+  outline: none !important;
+}

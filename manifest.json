@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "WA Direct Sender (No Limits)",
+  "name": "WA Direct Sender (Sin Límites)",
   "version": "1.0.0",
-  "description": "Custom, private WhatsApp Web messaging assistant with CSV support, random delays, and no arbitrary limits.",
+  "description": "Asistente de mensajería para WhatsApp Web con soporte CSV/Excel, intervalos aleatorios, adjuntos y sin límites arbitrarios.",
   "permissions": [
     "storage"
   ],
