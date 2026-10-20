@@ -1,0 +1,4 @@
+Built WA Direct Sender: a 100% free, private Manifest V3 Chrome extension for WhatsApp Web with ZERO message limits, Excel/CSV mapping, dynamic {Name} variables, and media attachments with no "Forwarded" tag. 
+
+No $30/mo paywalls. No servers. Get the free ZIP on GitHub:
+👉 https://github.com/nil-frontend/WA-Automation
