@@ -19,7 +19,7 @@ Esta versión renueva la identidad del proyecto: **WAScale** sustituye el nombre
 
 - **Nuevo nombre:** WAScale.
 - **Nuevos íconos:** se actualizan los recursos visuales de la extensión en los tamaños 16, 32, 48 y 128 píxeles.
-- **Documentación simplificada:** se retira del README la referencia al plan de promoción.
+- **Limpieza del repositorio:** se retiran `PROMOTION_PLAN.md` y la carpeta `brag-output/`, así como el enlace promocional en la documentación.
 
 **No se introducen cambios funcionales respecto de la versión 1.1.0.** Consulta el [historial de cambios](CHANGELOG.md).
 
@@ -61,17 +61,17 @@ Para actualizar una instalación existente, reemplaza los archivos de la extensi
 
 ## 📥 Installation Guide
 
-### Method 1: Pre-Built Release ZIP (Recommended for Users)
+### Method 1: Repository ZIP (Recommended for Users)
 
-1. Head over to the [**GitHub Releases**](https://github.com/sebastianlezcanod-ui/Automatizar-WhatsApp-ES/releases) section.
-2. Download the ZIP file attached to the latest published release (when v2.0.0 becomes available, choose that version).
+1. Open the [**WAScale source repository**](https://github.com/sebastianlezcanod-ui/Automatizar-WhatsApp-ES) (branch `main`).
+2. Click **Code → Download ZIP** to download the current v2.0.0 source.
 3. Unzip / Extract the ZIP file into a convenient folder on your computer.
 4. Open Google Chrome and enter `chrome://extensions` in the address bar.
 5. In the top-right corner, switch **Developer mode** to **ON**.
 6. In the top-left corner, click **Load unpacked**.
 7. Select the unzipped folder containing `manifest.json`.
 8. Navigate to [web.whatsapp.com](https://web.whatsapp.com).
-9. You'll see a green **`WA Sender`** pill button pinned in the top bar—click it to open your automation drawer!
+9. You'll see a green **`WAScale`** pill button pinned in the top bar—click it to open your automation drawer!
 
 ---
 
@@ -93,7 +93,7 @@ git clone https://github.com/sebastianlezcanod-ui/Automatizar-WhatsApp-ES.git
 
 ```mermaid
 flowchart TD
-    A["Open WhatsApp Web"] --> B["Click 'WA Sender' Top Button"]
+    A["Open WhatsApp Web"] --> B["Click 'WAScale' Top Button"]
     B --> C{"Choose Input Mode"}
     C -->|"Excel / CSV"| D["Upload .xlsx or .csv & Map Column"]
     C -->|"Manual List"| E["Paste Country Coded Numbers"]
