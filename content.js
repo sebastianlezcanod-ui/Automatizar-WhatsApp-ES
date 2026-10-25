@@ -133,7 +133,7 @@
         <div class="wads-tab-panel active" id="wads-tab-manual">
           <div class="wads-form-group">
             <label for="wads-manual-numbers">Números de Teléfono</label>
-            <textarea id="wads-manual-numbers" class="wads-textarea" placeholder="ej.&#10;956733324&#10;+51956733324"></textarea>
+            <textarea id="wads-manual-numbers" class="wads-textarea" placeholder="ej.&#10;900000000&#10;+51900000000"></textarea>
             <div class="wads-hint">Separa los números con comas o saltos de línea. Activa el código de país para usar números locales; los números con +código se conservan.</div>
             ${renderCountryCodeSectionHTML('manual')}
           </div>

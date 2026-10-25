@@ -17,7 +17,7 @@ A powerful, private, and completely free Chrome extension for **WhatsApp Web aut
 ## Novedades de la versión 1.1.0
 
 - **Código de país en Lista Manual:** activado por defecto con **+51 Perú**, editable y con interruptor para desactivarlo. La preferencia se guarda y se comparte con Excel/CSV.
-- **Números locales e internacionales:** por ejemplo, `956733324` se convierte en `51956733324`. Los números completos con `+` conservan su código de país y el prefijo existente no se duplica.
+- **Números locales e internacionales:** por ejemplo, `900000000` se convierte en `51900000000`. Los números completos con `+` conservan su código de país y el prefijo existente no se duplica.
 - **Reenvío de imágenes desde Mi Chat:** compatibilidad con el botón «Enviar» en español, pies del cuadro de diálogo y controles que WhatsApp vuelve a renderizar al seleccionar un contacto.
 - **Registros más claros:** si el texto se envía pero falla el archivo, se muestra «Parcial». Los registros históricos con fallos dejan de aparecer como éxitos completos.
 
