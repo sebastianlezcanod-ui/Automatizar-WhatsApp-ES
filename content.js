@@ -132,9 +132,10 @@
         <!-- Tab 1: Manual List -->
         <div class="wads-tab-panel active" id="wads-tab-manual">
           <div class="wads-form-group">
-            <label for="wads-manual-numbers">Números de Teléfono (con código de país)</label>
-            <textarea id="wads-manual-numbers" class="wads-textarea" placeholder="ej.&#10;+34612345678&#10;+5215512345678&#10;+573001234567"></textarea>
-            <div class="wads-hint">Separa los números con comas o saltos de línea. Incluye siempre el código de país.</div>
+            <label for="wads-manual-numbers">Números de Teléfono</label>
+            <textarea id="wads-manual-numbers" class="wads-textarea" placeholder="ej.&#10;956733324&#10;+51956733324"></textarea>
+            <div class="wads-hint">Separa los números con comas o saltos de línea. Activa el código de país para usar números locales; los números con +código se conservan.</div>
+            ${renderCountryCodeSectionHTML('manual')}
           </div>
 
           <div class="wads-form-group">
@@ -170,27 +171,7 @@
               <label for="wads-csv-phone-col">Columna de Número de Teléfono</label>
               <select id="wads-csv-phone-col" class="wads-select"></select>
 
-              <!-- Peru / Country Code Toggle Card -->
-              <div class="wads-cc-card active" id="wads-cc-card">
-                <div class="wads-cc-info">
-                  <div class="wads-cc-title">
-                    <span>🇵🇪 Código de país (+51 Perú)</span>
-                  </div>
-                  <div class="wads-cc-sub">Anteponer +51 automáticamente a cada número</div>
-                </div>
-                <div class="wads-cc-right">
-                  <input type="text" id="wads-cc-prefix" class="wads-cc-input" value="+51" title="Código de país">
-                  <div class="wads-switch-wrap">
-                    <span class="wads-switch-status on" id="wads-cc-status">SÍ</span>
-                    <label class="wads-switch-btn" for="wads-cc-toggle">
-                      <input type="checkbox" id="wads-cc-toggle" class="wads-switch-checkbox" checked>
-                      <span class="wads-switch-rail">
-                        <span class="wads-switch-circle"></span>
-                      </span>
-                    </label>
-                  </div>
-                </div>
-              </div>
+              ${renderCountryCodeSectionHTML('csv')}
 
               <div id="wads-csv-phone-preview" class="wads-phone-preview-box" style="display: none;"></div>
             </div>
@@ -256,6 +237,28 @@
 
     document.body.appendChild(drawer);
     setupEventListeners();
+  }
+
+  function renderCountryCodeSectionHTML(mode) {
+    const suffix = mode === 'manual' ? '-manual' : '';
+    return `
+      <div class="wads-cc-card active" id="wads-cc-card${suffix}">
+        <div class="wads-cc-info">
+          <div class="wads-cc-title"><span id="wads-cc-title${suffix}">🇵🇪 Código de país (+51 Perú)</span></div>
+          <div class="wads-cc-sub" id="wads-cc-description${suffix}">Añadir +51 a los números sin código de país</div>
+        </div>
+        <div class="wads-cc-right">
+          <input type="text" id="wads-cc-prefix${suffix}" class="wads-cc-input" value="+51" inputmode="numeric" aria-label="Código de país" title="Código de país">
+          <div class="wads-switch-wrap">
+            <span class="wads-switch-status on" id="wads-cc-status${suffix}">SÍ</span>
+            <label class="wads-switch-btn" for="wads-cc-toggle${suffix}">
+              <input type="checkbox" id="wads-cc-toggle${suffix}" class="wads-switch-checkbox" aria-label="Añadir código de país automáticamente" checked>
+              <span class="wads-switch-rail"><span class="wads-switch-circle"></span></span>
+            </label>
+          </div>
+        </div>
+      </div>
+    `;
   }
 
   function renderAttachmentSectionHTML(prefix) {
@@ -478,84 +481,75 @@
   }
 
   function formatPhoneNumber(rawPhone, enablePrefix = state.enableCountryCode, prefix = state.countryCodePrefix) {
-    let clean = String(rawPhone || '').replace(/\D/g, '');
-    if (!clean) return '';
-    // If Peruvian number entered with leading 0 (e.g. 0958921873 -> 958921873)
-    if (clean.length === 10 && clean.startsWith('0')) {
+    const raw = String(rawPhone || '').trim();
+    let clean = raw.replace(/\D/g, '');
+    if (!clean || !enablePrefix) return clean;
+    // An explicit international number keeps its own country code.
+    if (raw.startsWith('+')) return clean;
+    if (raw.startsWith('00')) return clean.slice(2);
+
+    const p = String(prefix || '51').replace(/\D/g, '');
+    if (p === '51' && clean.length === 10 && clean.startsWith('0')) {
       clean = clean.slice(1);
     }
-    if (enablePrefix) {
-      const p = String(prefix || '51').replace(/\D/g, '');
-      if (p && !clean.startsWith(p)) {
-        clean = p + clean;
-      }
-    }
+    if (p && !clean.startsWith(p)) clean = p + clean;
     return clean;
   }
 
   function setupCountryCodeListeners() {
-    const card = document.getElementById('wads-cc-card');
-    const toggle = document.getElementById('wads-cc-toggle');
-    const prefixInput = document.getElementById('wads-cc-prefix');
-
-    if (card) {
-      card.addEventListener('click', (e) => {
-        if (e.target.closest('.wads-switch-btn') || e.target.closest('#wads-cc-prefix')) return;
-        if (toggle) {
-          toggle.checked = !toggle.checked;
-          state.enableCountryCode = toggle.checked;
-          syncCountryCodeUI();
-          updatePhoneColumnPreview();
-          saveSettings();
-        }
-      });
-    }
-
-    if (toggle) {
-      toggle.addEventListener('change', (e) => {
-        state.enableCountryCode = e.target.checked;
+    ['', '-manual'].forEach((suffix) => {
+      const card = document.getElementById(`wads-cc-card${suffix}`);
+      const toggle = document.getElementById(`wads-cc-toggle${suffix}`);
+      const prefixInput = document.getElementById(`wads-cc-prefix${suffix}`);
+      const update = () => {
         syncCountryCodeUI();
         updatePhoneColumnPreview();
         saveSettings();
+      };
+      card?.addEventListener('click', (e) => {
+        if (e.target.closest('.wads-switch-btn, .wads-cc-input') || !toggle) return;
+        state.enableCountryCode = !state.enableCountryCode;
+        update();
       });
-    }
-
-    if (prefixInput) {
-      prefixInput.addEventListener('input', (e) => {
-        const digits = e.target.value.replace(/\D/g, '');
-        state.countryCodePrefix = digits || '51';
-        updatePhoneColumnPreview();
-        saveSettings();
+      toggle?.addEventListener('change', (e) => {
+        state.enableCountryCode = e.target.checked;
+        update();
       });
-      prefixInput.addEventListener('blur', (e) => {
-        const digits = e.target.value.replace(/\D/g, '') || '51';
-        state.countryCodePrefix = digits;
-        e.target.value = '+' + digits;
-        updatePhoneColumnPreview();
-        saveSettings();
+      prefixInput?.addEventListener('input', (e) => {
+        state.countryCodePrefix = e.target.value.replace(/\D/g, '') || '51';
+        // Keep the active field intact while the user edits it.
+        update();
       });
-    }
+      prefixInput?.addEventListener('blur', (e) => {
+        state.countryCodePrefix = e.target.value.replace(/\D/g, '') || '51';
+        e.target.value = '+' + state.countryCodePrefix;
+        update();
+      });
+    });
+    syncCountryCodeUI();
   }
 
   function syncCountryCodeUI() {
-    const card = document.getElementById('wads-cc-card');
-    const toggle = document.getElementById('wads-cc-toggle');
-    const status = document.getElementById('wads-cc-status');
-    const prefixInput = document.getElementById('wads-cc-prefix');
-
-    if (toggle) toggle.checked = state.enableCountryCode;
-    if (status) {
-      status.textContent = state.enableCountryCode ? 'SÍ' : 'NO';
-      status.className = 'wads-switch-status' + (state.enableCountryCode ? ' on' : '');
-    }
-    if (card) {
-      if (state.enableCountryCode) card.classList.add('active');
-      else card.classList.remove('active');
-    }
-    if (prefixInput) {
-      const code = state.countryCodePrefix ? `+${state.countryCodePrefix}` : '+51';
-      prefixInput.value = code;
-    }
+    const code = '+' + (state.countryCodePrefix || '51');
+    ['', '-manual'].forEach((suffix) => {
+      const card = document.getElementById(`wads-cc-card${suffix}`);
+      const toggle = document.getElementById(`wads-cc-toggle${suffix}`);
+      const status = document.getElementById(`wads-cc-status${suffix}`);
+      const prefixInput = document.getElementById(`wads-cc-prefix${suffix}`);
+      const title = document.getElementById(`wads-cc-title${suffix}`);
+      const description = document.getElementById(`wads-cc-description${suffix}`);
+      if (toggle) toggle.checked = state.enableCountryCode;
+      if (status) {
+        status.textContent = state.enableCountryCode ? 'SÍ' : 'NO';
+        status.className = 'wads-switch-status' + (state.enableCountryCode ? ' on' : '');
+      }
+      card?.classList.toggle('active', state.enableCountryCode);
+      if (prefixInput && document.activeElement !== prefixInput) prefixInput.value = code;
+      if (title) title.textContent = code === '+51' ? '🇵🇪 Código de país (+51 Perú)' : `Código de país (${code})`;
+      if (description) description.textContent = state.enableCountryCode
+        ? `Añadir ${code} a los números sin código de país`
+        : 'Usar los números tal como los ingresaste';
+    });
   }
 
   function setupAttachmentListeners(prefix) {
@@ -1647,11 +1641,12 @@
 
     const numbers = rawNumbers
       .split(/[\n,;]+/)
-      .map((n) => n.replace(/\D/g, ''))
+      .filter((n) => n.replace(/\D/g, '').length >= 7)
+      .map((n) => formatPhoneNumber(n))
       .filter((n) => n.length >= 7);
 
     if (numbers.length === 0) {
-      alert('Por favor ingresa números de teléfono válidos con código de país.');
+      alert('Por favor ingresa números de teléfono válidos. Puedes activar el código de país para usar números locales.');
       return;
     }
 
@@ -1775,7 +1770,7 @@
                 logAttempt(item.phone, 'Enviado (Texto + Archivo de Mi Chat)', item.message);
               } catch (fwdErr) {
                 console.error('[Forward failed]', fwdErr);
-                logAttempt(item.phone, `Enviado (Texto enviado, fallo al reenviar: ${fwdErr.message})`, item.message);
+                logAttempt(item.phone, `Parcial (Texto enviado; fallo al reenviar el archivo: ${fwdErr.message})`, item.message);
               }
             } else {
               // Direct upload
@@ -1785,7 +1780,7 @@
                 logAttempt(item.phone, 'Enviado (Texto + Archivo directo)', item.message);
               } catch (attErr) {
                 console.error('[Direct attachment failed]', attErr);
-                logAttempt(item.phone, `Enviado (Texto enviado, fallo al adjuntar: ${attErr.message})`, item.message);
+                logAttempt(item.phone, `Parcial (Texto enviado; fallo al adjuntar el archivo: ${attErr.message})`, item.message);
               }
             }
           }
@@ -1812,9 +1807,9 @@
             if (fwdSuccess && textOutcome.success) {
               logAttempt(item.phone, 'Enviado (Archivo de Mi Chat + Texto)', item.message);
             } else if (fwdSuccess) {
-              logAttempt(item.phone, 'Enviado (Solo archivo)', item.message);
+              logAttempt(item.phone, 'Parcial (Solo archivo; fallo al enviar el texto)', item.message);
             } else if (textOutcome.success) {
-              logAttempt(item.phone, 'Enviado (Solo texto, fallo al reenviar)', item.message);
+              logAttempt(item.phone, 'Parcial (Solo texto; fallo al reenviar el archivo)', item.message);
             } else {
               logAttempt(item.phone, 'Fallido', item.message);
             }
@@ -1835,7 +1830,7 @@
               updateStatus(`[${state.currentIndex + 1}/${state.queue.length}] 2/2: Enviando texto a +${item.phone}...`);
               await navigateToChat(item.phone, item.message);
               const textOutcome = await waitForSendButtonOrError();
-              logAttempt(item.phone, textOutcome.success ? 'Enviado (Archivo directo + Texto)' : 'Enviado (Solo archivo)', item.message);
+              logAttempt(item.phone, textOutcome.success ? 'Enviado (Archivo directo + Texto)' : 'Parcial (Solo archivo; fallo al enviar el texto)', item.message);
             }
           }
         }
@@ -2008,6 +2003,99 @@
     }
   }
 
+  // WhatsApp can render the action footer outside the modal body.
+  const FORWARD_DIALOG_SELECTOR = [
+    'div[data-animate-modal-body="true"]',
+    'div[role="dialog"]',
+    'div[data-testid="forward-chat-drawer"]',
+    'div[data-animate-modal-popup="true"]',
+    'div[data-animate-modal-container="true"]',
+  ].join(', ');
+
+  function getForwardDialogRoots(modal) {
+    // React can replace the original body after selecting a contact.
+    const current = modal?.isConnected ? modal : document.querySelector(FORWARD_DIALOG_SELECTOR);
+    if (!current) return [];
+
+    const roots = [current];
+    for (let parent = current.parentElement; parent && parent !== document.body && parent.id !== 'app'; parent = parent.parentElement) {
+      if (parent.matches(FORWARD_DIALOG_SELECTOR)) roots.push(parent);
+    }
+    return roots;
+  }
+
+  function findForwardSendButton(modal) {
+    const selectors = [
+      '[data-icon="send"]',
+      '[data-icon="wds-ic-send-filled"]',
+      '[data-icon="send-light"]',
+      '[data-testid="send"]',
+      'button[aria-label*="send" i], [role="button"][aria-label*="send" i]',
+      'button[aria-label*="enviar" i], [role="button"][aria-label*="enviar" i]',
+      'button[aria-label*="encaminhar" i], [role="button"][aria-label*="encaminhar" i]',
+      'button[title*="send" i], [role="button"][title*="send" i]',
+      'button[title*="enviar" i], [role="button"][title*="enviar" i]',
+    ].join(', ');
+
+    for (const root of getForwardDialogRoots(modal)) {
+      for (const match of root.querySelectorAll(selectors)) {
+        const button = match.closest('button, [role="button"]') || match;
+        if (!root.contains(button) || !button.isConnected || !button.getClientRects().length) continue;
+        if (button.closest('[disabled], [aria-disabled="true"], [inert]')) continue;
+        const style = window.getComputedStyle(button);
+        if (style.visibility === 'hidden' || style.visibility === 'collapse') continue;
+        return button;
+      }
+    }
+    return null;
+  }
+
+  function isForwardContactChecked(checkbox) {
+    if (checkbox.matches('input[type="checkbox"]')) return checkbox.checked;
+    const checked = checkbox.getAttribute('aria-checked') ?? checkbox.getAttribute('data-checked');
+    if (checked !== null) return checked === 'true';
+    // "checkbox-unchecked" also contains "check": only match checked icons exactly.
+    return !!checkbox.querySelector(
+      '[data-icon="checkbox-checked"], [data-icon="check"], [data-icon="wds-ic-checkbox-checked"]'
+    ) || checkbox.classList.contains('checked');
+  }
+
+  function closeForwardDialog(modal) {
+    for (const root of getForwardDialogRoots(modal)) {
+      const close = root.querySelector(
+        'button[aria-label*="close" i], [role="button"][aria-label*="close" i], ' +
+        'button[aria-label*="cerrar" i], [role="button"][aria-label*="cerrar" i], ' +
+        '[data-icon="x"], [data-icon="x-alt"]'
+      );
+      if (close) {
+        (close.closest('button, [role="button"]') || close).click();
+        return;
+      }
+    }
+  }
+
+  async function sendForwardDialog(modal) {
+    for (let attempt = 0; attempt < 15; attempt++) {
+      const button = findForwardSendButton(modal);
+      if (button) {
+        button.dispatchEvent(new MouseEvent('mousedown', { bubbles: true, cancelable: true, view: window }));
+        button.dispatchEvent(new MouseEvent('mouseup', { bubbles: true, cancelable: true, view: window }));
+        button.click();
+
+        // A click alone does not confirm that WhatsApp accepted the action.
+        for (let confirmation = 0; confirmation < 20; confirmation++) {
+          await sleep(300);
+          if (getForwardDialogRoots(modal).length === 0) return;
+        }
+        closeForwardDialog(modal);
+        throw new Error('WhatsApp no confirmó el reenvío después de pulsar Enviar.');
+      }
+      await sleep(400);
+    }
+    closeForwardDialog(modal);
+    throw new Error('No se encontró un botón Enviar habilitado en el cuadro de reenvío.');
+  }
+
   // --- Forward Media from Self Chat ---
 
   async function forwardMediaFromSelfChat(phone) {
@@ -2068,7 +2156,7 @@
     for (let attempt = 1; attempt <= 20; attempt++) {
       // Check if forward modal is already open
       const existingModal = document.querySelector(
-        'div[data-animate-modal-body="true"], div[role="dialog"], div[data-testid="forward-chat-drawer"], div[data-animate-modal-popup="true"]'
+        FORWARD_DIALOG_SELECTOR
       );
       if (existingModal) {
         modalOpened = true;
@@ -2183,7 +2271,7 @@
 
     // 4. Wait for Forward popup modal
     const modal = await waitForElement(
-      'div[data-animate-modal-body="true"], div[role="dialog"], div[data-testid="forward-chat-drawer"], div[data-animate-modal-popup="true"]',
+      FORWARD_DIALOG_SELECTOR,
       7000
     );
     if (!modal) {
@@ -2208,9 +2296,7 @@
           text.includes('meus contatos') ||
           (row && !!row.querySelector('[data-icon*="status"], [data-testid*="status"]'))
         ) {
-          const isChecked = chk.getAttribute('aria-checked') === 'true' ||
-            chk.getAttribute('data-checked') === 'true' ||
-            !!chk.querySelector('span[data-icon="checkbox-checked"], span[data-icon="check"], [data-icon*="check"]');
+          const isChecked = isForwardContactChecked(chk);
           if (isChecked) {
             console.log('[WA Forward Safety] Unchecked "My status" item');
             chk.dispatchEvent(new MouseEvent('mousedown', { bubbles: true, cancelable: true, view: window }));
@@ -2304,9 +2390,8 @@
 
     if (contacts.length === 0) {
       // Close modal gracefully
-      const closeBtn = modal.querySelector('button[aria-label*="Close"], span[data-icon="x"], span[data-icon="x-alt"]');
-      if (closeBtn) (closeBtn.closest('button') || closeBtn).click();
-      throw new Error(`Could not find contact +${cleanPhone} in Forward list.`);
+      closeForwardDialog(modal);
+      throw new Error(`No se encontró el contacto +${cleanPhone} en la lista de reenvío.`);
     }
 
     // 7. Select the target contact (never My status!)
@@ -2315,10 +2400,8 @@
     const row = target.row;
 
     const isTargetChecked = () => {
-      return chk.getAttribute('aria-checked') === 'true' ||
-        chk.getAttribute('data-checked') === 'true' ||
-        !!chk.querySelector('span[data-icon="checkbox-checked"], span[data-icon="check"], [data-icon*="check"]') ||
-        chk.classList.contains('checked');
+      const current = getRealContacts().find((contact) => contact.row === row || contact.text === target.text);
+      return isForwardContactChecked(current?.checkbox || chk);
     };
 
     console.log(`[WA Forward] Selecting contact: ${target.text.substring(0, 30)}...`);
@@ -2331,7 +2414,7 @@
       await sleep(350);
 
       // If still not checked, click the row container
-      if (!isTargetChecked() && row) {
+      if (!isTargetChecked() && !findForwardSendButton(modal) && row?.isConnected) {
         row.dispatchEvent(new MouseEvent('mousedown', { bubbles: true, cancelable: true, view: window }));
         row.dispatchEvent(new MouseEvent('mouseup', { bubbles: true, cancelable: true, view: window }));
         row.click();
@@ -2343,45 +2426,8 @@
     uncheckStatus();
     await sleep(300);
 
-    // 9. Click Send button in Forward modal (with polling across modal & document)
-    let sendSuccess = false;
-    const sendSelectors = [
-      'span[data-icon="send"]',
-      'span[data-icon="wds-ic-send-filled"]',
-      'span[data-icon="send-light"]',
-      'div[data-testid="send"]',
-      'button[aria-label="Send"]',
-      'button[aria-label*="Send"]',
-      'button[aria-label*="Enviar"]',
-      'div[role="button"][aria-label*="Send"]'
-    ];
-
-    for (let sAttempt = 0; sAttempt < 15; sAttempt++) {
-      let sendBtn = modal.querySelector(sendSelectors.join(', '));
-      if (!sendBtn) {
-        sendBtn = document.querySelector(
-          'div[data-animate-modal-body="true"] span[data-icon="send"], div[data-animate-modal-body="true"] [data-icon="wds-ic-send-filled"], div[role="dialog"] span[data-icon="send"], div[role="dialog"] [data-icon="wds-ic-send-filled"], div[role="dialog"] button[aria-label*="Send"], div[role="dialog"] button[aria-label*="Enviar"]'
-        );
-      }
-
-      if (sendBtn) {
-        console.log('[WA Forward] Found forward Send button, clicking...');
-        const actualBtn = sendBtn.closest('button, div[role="button"]') || sendBtn;
-        actualBtn.dispatchEvent(new MouseEvent('mousedown', { bubbles: true, cancelable: true, view: window }));
-        actualBtn.dispatchEvent(new MouseEvent('mouseup', { bubbles: true, cancelable: true, view: window }));
-        actualBtn.click();
-        sendSuccess = true;
-        break;
-      }
-      await sleep(400);
-    }
-
-    if (!sendSuccess) {
-      // Close modal gracefully before throwing
-      const closeBtn = modal.querySelector('button[aria-label*="Close"], span[data-icon="x"], span[data-icon="x-alt"]');
-      if (closeBtn) (closeBtn.closest('button') || closeBtn).click();
-      throw new Error('Send button inside Forward dialog not found.');
-    }
+    // 9. Find the current dialog action, including Spanish role buttons.
+    await sendForwardDialog(modal);
 
     console.log(`[WA Forward] Media forward sent to +${phone} successfully!`);
     await sleep(2500);
@@ -2747,7 +2793,9 @@
     tbody.innerHTML = state.logs
       .slice(0, 50)
       .map((l) => {
-        const statusClass = (l.status.startsWith('Sent') || l.status.startsWith('Enviado')) ? 'wads-status-sent' : 'wads-status-failed';
+        const isComplete = (l.status.startsWith('Sent') || l.status.startsWith('Enviado')) &&
+          !/fallo|fallido|error|solo texto|solo archivo/i.test(l.status);
+        const statusClass = isComplete ? 'wads-status-sent' : 'wads-status-failed';
         return `
           <tr>
             <td>+${l.phone}</td>
