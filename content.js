@@ -1,5 +1,5 @@
 /**
- * WA Direct Sender - Content Script
+ * WAScale - Content Script
  * Pure client-side WhatsApp Web messaging assistant with no arbitrary limits.
  * Supports: Manual phone lists, Excel (.xlsx, .xls) & CSV upload,
  * dynamic variable tags, and Media/Document attachments with:
@@ -77,7 +77,7 @@
       <svg viewBox="0 0 24 24">
         <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
       </svg>
-      <span>WA Sender</span>
+      <span>WAScale</span>
     `;
     btn.addEventListener('click', toggleDrawer);
     document.body.appendChild(btn);
@@ -95,7 +95,7 @@
       <div class="wads-header">
         <div class="wads-brand">
           <svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
-          <div class="wads-title">WA Sender Directo</div>
+          <div class="wads-title">WAScale</div>
           <span class="wads-badge">Sin Límites</span>
         </div>
         <button class="wads-close-btn" id="wads-close-btn" title="Cerrar">
@@ -1842,7 +1842,7 @@
         logAttempt(item.phone, outcome.success ? 'Enviado' : outcome.reason || 'Fallido', item.message);
       }
     } catch (err) {
-      console.error('[WA Sender Error]', err);
+      console.error('[WAScale Error]', err);
       logAttempt(item.phone, 'Error', err.message);
     }
 

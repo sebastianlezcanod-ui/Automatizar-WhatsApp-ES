@@ -1,5 +1,21 @@
 # Historial de cambios
 
+## [2.0.0] - 2026-10-25
+
+### Identidad visual
+
+- El proyecto cambia de nombre de **WA Direct Sender** a **WAScale**.
+- Se renuevan los íconos de la extensión en los tamaños 16, 32, 48 y 128 píxeles.
+
+### Documentación
+
+- Se elimina del `README.md` el enlace al plan de promoción.
+- Se eliminan `PROMOTION_PLAN.md` y la carpeta `brag-output/`, incluidos los materiales promocionales que contenía.
+
+### Funcionalidad
+
+- Sin nuevas funcionalidades ni cambios funcionales intencionados respecto de v1.1.0.
+
 ## [1.1.0] - 2026-10-25
 
 ### Añadido
