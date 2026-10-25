@@ -39,20 +39,20 @@ async function main() {
     }), true);
     console.log('PASS manual toggle defaults to enabled +51 and has unique controls');
 
-    await page.locator('#wads-manual-numbers').fill('956733324; +51 956 733 324\n51956733324, +34 612345678\n0034612345678;0956733324;abc;123');
+    await page.locator('#wads-manual-numbers').fill('900000000; +51 900 000 000\n51900000000, +34 612345678\n0034612345678;0900000000;abc;123');
     await page.locator('#wads-manual-message').fill('Prueba local sin envío');
     await page.locator('#wads-start-manual-btn').click();
     assert.deepEqual(await page.evaluate(() => window.testQueue.map(item => item.phone)), [
-      '51956733324', '51956733324', '51956733324', '34612345678', '34612345678', '51956733324',
+      '51900000000', '51900000000', '51900000000', '34612345678', '34612345678', '51900000000',
     ]);
     console.log('PASS manual queue handles local, complete, foreign and invalid numbers');
 
     await page.locator('label[for="wads-cc-toggle-manual"]').click();
     assert.equal(await page.locator('#wads-cc-toggle-manual').isChecked(), false);
     assert.equal(await page.locator('#wads-cc-toggle').isChecked(), false);
-    await page.locator('#wads-manual-numbers').fill('956733324;0956733324;+34612345678');
+    await page.locator('#wads-manual-numbers').fill('900000000;0900000000;+34612345678');
     await page.locator('#wads-start-manual-btn').click();
-    assert.deepEqual(await page.evaluate(() => window.testQueue.map(item => item.phone)), ['956733324', '0956733324', '34612345678']);
+    assert.deepEqual(await page.evaluate(() => window.testQueue.map(item => item.phone)), ['900000000', '0900000000', '34612345678']);
     assert.equal(await page.evaluate(() => window.savedSettings.wads_enable_country_code), false);
     console.log('PASS disabled toggle preserves digits and saves the setting');
 
@@ -61,9 +61,9 @@ async function main() {
     await page.locator('#wads-manual-numbers').click();
     assert.equal(await page.locator('#wads-cc-prefix-manual').inputValue(), '+57');
     assert.equal(await page.locator('#wads-cc-prefix').inputValue(), '+57');
-    await page.locator('#wads-manual-numbers').fill('3001234567;+51956733324');
+    await page.locator('#wads-manual-numbers').fill('3001234567;+51900000000');
     await page.locator('#wads-start-manual-btn').click();
-    assert.deepEqual(await page.evaluate(() => window.testQueue.map(item => item.phone)), ['573001234567', '51956733324']);
+    assert.deepEqual(await page.evaluate(() => window.testQueue.map(item => item.phone)), ['573001234567', '51900000000']);
     assert.equal(await page.evaluate(() => window.savedSettings.wads_country_code_prefix), '57');
     console.log('PASS edited code syncs both tabs without changing explicit international numbers');
 
