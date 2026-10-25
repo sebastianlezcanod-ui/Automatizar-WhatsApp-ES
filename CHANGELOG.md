@@ -1,6 +1,6 @@
 # Historial de cambios
 
-## [2.0.0] - En preparación
+## [2.0.0] - 2026-10-25
 
 ### Identidad visual
 
@@ -10,7 +10,7 @@
 ### Documentación
 
 - Se elimina del `README.md` el enlace al plan de promoción.
-- Se prevé retirar `PROMOTION_PLAN.md` del repositorio antes de publicar v2.0.0. **El archivo todavía no ha sido eliminado.**
+- Se eliminan `PROMOTION_PLAN.md` y la carpeta `brag-output/`, incluidos los materiales promocionales que contenía.
 
 ### Funcionalidad
 
