@@ -1,27 +1,29 @@
-# 🚀 WA Direct Sender — Unlimited WhatsApp Web Automation
+# 🚀 WAScale — WhatsApp Web Automation
 
 [![Manifest V3](https://img.shields.io/badge/Manifest-V3-success?style=for-the-badge&logo=googlechrome&logoColor=white)](https://developer.chrome.com/docs/extensions/mv3/intro/)
 [![WhatsApp Web](https://img.shields.io/badge/WhatsApp-Web%20Automation-25D366?style=for-the-badge&logo=whatsapp&logoColor=white)](https://web.whatsapp.com)
 [![Privacy First](https://img.shields.io/badge/Privacy-100%25%20Local-blue?style=for-the-badge&logo=shield&logoColor=white)](#-privacy--security)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow?style=for-the-badge)](LICENSE)
 
-A powerful, private, and completely free Chrome extension for **WhatsApp Web automation**. Built with **Manifest V3**, **vanilla JavaScript**, and client-side Excel/CSV parsing. 
+**WAScale** (anteriormente *WA Direct Sender*) es una extensión gratuita de Chrome para **automatizar tareas de mensajería en WhatsApp Web**. Built with **Manifest V3**, **vanilla JavaScript**, and client-side Excel/CSV parsing. 
 
 > **Zero arbitrary quotas. Zero message limits. No monthly subscriptions. 100% Private (No data leaves your computer).**  
 >  
 > *"Why pay if I could build it? That's the fun of being a developer!"*  
-> 📢 *Planning to launch or share this project? See the complete [Promotion & Social Launch Plan](PROMOTION_PLAN.md).*
 
 ---
 
-## Novedades de la versión 1.1.0
+## Novedades de la versión 2.0.0
 
-- **Código de país en Lista Manual:** activado por defecto con **+51 Perú**, editable y con interruptor para desactivarlo. La preferencia se guarda y se comparte con Excel/CSV.
-- **Números locales e internacionales:** por ejemplo, `900000000` se convierte en `51900000000`. Los números completos con `+` conservan su código de país y el prefijo existente no se duplica.
-- **Reenvío de imágenes desde Mi Chat:** compatibilidad con el botón «Enviar» en español, pies del cuadro de diálogo y controles que WhatsApp vuelve a renderizar al seleccionar un contacto.
-- **Registros más claros:** si el texto se envía pero falla el archivo, se muestra «Parcial». Los registros históricos con fallos dejan de aparecer como éxitos completos.
+Esta versión renueva la identidad del proyecto: **WAScale** sustituye el nombre anterior **WA Direct Sender**.
 
-Consulta el [historial de cambios](CHANGELOG.md). Para actualizar una instalación existente, reemplaza los archivos de la extensión, pulsa **Recargar** en `chrome://extensions` y recarga WhatsApp Web.
+- **Nuevo nombre:** WAScale.
+- **Nuevos íconos:** se actualizan los recursos visuales de la extensión en los tamaños 16, 32, 48 y 128 píxeles.
+- **Documentación simplificada:** se retira del README la referencia al plan de promoción.
+
+**No se introducen cambios funcionales respecto de la versión 1.1.0.** Consulta el [historial de cambios](CHANGELOG.md).
+
+Para actualizar una instalación existente, reemplaza los archivos de la extensión, pulsa **Recargar** en `chrome://extensions` y recarga WhatsApp Web.
 
 ---
 
@@ -62,7 +64,7 @@ Consulta el [historial de cambios](CHANGELOG.md). Para actualizar una instalaci�
 ### Method 1: Pre-Built Release ZIP (Recommended for Users)
 
 1. Head over to the [**GitHub Releases**](https://github.com/sebastianlezcanod-ui/Automatizar-WhatsApp-ES/releases) section.
-2. Download the latest `Automatizar-WhatsApp-ES-v1.1.0.zip`.
+2. Download the ZIP file attached to the latest published release (when v2.0.0 becomes available, choose that version).
 3. Unzip / Extract the ZIP file into a convenient folder on your computer.
 4. Open Google Chrome and enter `chrome://extensions` in the address bar.
 5. In the top-right corner, switch **Developer mode** to **ON**.
